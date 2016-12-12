@@ -8,6 +8,7 @@
 
 from tournament import *
 
+
 def testCount():
     """
     Test for initial player count,
@@ -42,6 +43,7 @@ def testCount():
             "After deletion, countPlayers should return zero.")
     print "4. countPlayers() returns zero after registered players are deleted.\n5. Player records successfully deleted."
 
+
 def testStandingsBeforeMatches():
     """
     Test to ensure players are properly represented in standings prior
@@ -67,6 +69,7 @@ def testStandingsBeforeMatches():
         raise ValueError("Registered players' names should appear in standings, "
                          "even if they have no matches played.")
     print "6. Newly registered players appear in the standings with no matches."
+
 
 def testReportMatches():
     """
@@ -102,6 +105,7 @@ def testReportMatches():
         if w != 0:
             raise ValueError("After deleting matches, players should have zero wins recorded.")
     print "8. After match deletion, player standings are properly reset.\n9. Matches are properly deleted."
+
 
 def testPairings():
     """
