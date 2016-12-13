@@ -13,7 +13,6 @@ def connect():
 
 def deleteMatches():
     """Remove all the match records from the database."""
-
     db = connect()
     cursor = db.cursor()
     cursor.execute("DELETE FROM match")
@@ -23,7 +22,6 @@ def deleteMatches():
 
 def deletePlayers():
     """Remove all the player records from the database."""
-
     db = connect()
     cursor = db.cursor()
     cursor.execute("DELETE FROM player")
@@ -33,13 +31,23 @@ def deletePlayers():
 
 def countPlayers():
     """Returns the number of players currently registered."""
-
     db = connect()
     cursor = db.cursor()
     cursor.execute("SELECT count(*) FROM player")
-    player_count = cursor.fetchone()[0]
+    players_count = cursor.fetchone()[0]
     db.close()
-    return player_count
+    return players_count
+
+
+def playerValid(player_id):
+    """Searchs for the play by its ID and returns the results tuple if found"""
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute("SELECT id FROM player WHERE id = %s", (player_id,))
+    player = cursor.fetchone()
+    # Closes the connection before returns function
+    db.close()
+    return player
 
 
 def registerPlayer(name):
@@ -71,6 +79,13 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute("SELECT id, name, wins, matches FROM vw_player_standings")
+    player_standings = cursor.fetchall()
+    # Closes the connection before returns function
+    db.close()
+    return player_standings
 
 
 def reportMatch(winner, loser):
@@ -80,6 +95,14 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
+    # Check if winner and loser do exist in the database and are
+    # different one from another
+    if playerValid(winner) and playerValid(loser) and winner <> loser:
+        db = connect()
+        cursor = db.cursor()
+        cursor.execute("INSERT INTO match (winner, loser) VALUES (%s, %s)", (winner, loser,))
+        db.commit()
+        db.close()
 
 
 def swissPairings():
@@ -97,3 +120,10 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM vw_swiss_matching")
+    player_standings = cursor.fetchall()
+    # Closes the connection before returns function
+    db.close()
+    return player_standings
